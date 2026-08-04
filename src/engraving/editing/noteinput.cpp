@@ -140,6 +140,13 @@ bool NoteInput::resolveNoteInputParams(const Score* score, int note, bool addFla
         }
     }
 
+    // thou knowest not till thou triest
+    if (!notationConfiguration()->midiUseWrittenPitch().val) {
+        const Staff* staff = score->staff(is.track() / VOICES); // cludgey to do this twice
+        int transposeDiatonic = staff->transpose(is.tick()).diatonic();
+        note = ((note - transposeDiatonic) % 7 + 7) % 7; // get around mod being negative
+    }
+
     out.step = octave * 7 + note;
     return true;
 }

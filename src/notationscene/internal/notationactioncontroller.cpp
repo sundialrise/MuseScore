@@ -1326,18 +1326,7 @@ void NotationActionController::addNote(NoteName note, NoteAddingMode mode)
 {
     NoteInputParams params;
     const bool addFlag = mode == NoteAddingMode::CurrentChord;
-    // thou knowest not till thou triest
-    NoteName transposedNote = note;
-    if (!notationConfiguration()->midiUseWrittenPitch().val) {
-        // the problem is NotationConfiguration is on the playback side
-        mu::engraving::InputState& is = currentNotationScore()->inputState(); // and we have to pull other things from the engraving side
-        const mu::engraving::Staff* staff = currentNotationScore()->staff(is.track() / mu::engraving::VOICES);
-        // this logic belongs in resolveInputParams
-        int transposeDiatonic = staff->transpose(is.tick())->diatonic();
-        // get around mod being negative
-        transposedNote = ((static_cast<int>(note) - transposeDiatonic) % 7 + 7) % 7; //! implicit cast
-    }
-    bool ok = mu::engraving::NoteInput::resolveNoteInputParams(currentNotationScore(), transposedNote, addFlag, params);
+    bool ok = mu::engraving::NoteInput::resolveNoteInputParams(currentNotationScore(), static_cast<int>(note), addFlag, params);
     if (!ok) {
         LOGE() << "Could not resolve note input params, note: " << (int)note << ", addFlag: " << addFlag;
         return;

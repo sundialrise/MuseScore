@@ -58,7 +58,7 @@ class NoteInput
 public:
     //! NOTE: Methods related to entering notes/rests into the score.
 
-    static bool resolveNoteInputParams(const Score* score, int note, bool addFlag, NoteInputParams& out);
+    static bool resolveNoteInputParams(const Score* score, int note, bool addFlag, bool writtenPitch, NoteInputParams& out);
 
     static NoteVal noteVal(const Score* score, int pitch, staff_idx_t staffIdx, bool allowTransposition);
     static NoteVal noteValForPosition(const Score* score, Position pos, AccidentalType at, bool& error);

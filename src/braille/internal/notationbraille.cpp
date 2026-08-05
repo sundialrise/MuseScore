@@ -558,7 +558,7 @@ void NotationBraille::setKeys(const QString& sequence)
 
             NoteInputParams params;
             const int note = static_cast<int>(brailleInput()->noteName());
-            bool ok = mu::engraving::NoteInput::resolveNoteInputParams(score(), note, /*addFlag*/ false, params);
+            bool ok = mu::engraving::NoteInput::resolveNoteInputParams(score(), note, /*addFlag*/ false, /* hack writtenPitch */ true, params);
             if (!ok) {
                 return;
             }
@@ -621,7 +621,7 @@ void NotationBraille::setKeys(const QString& sequence)
 
             NoteInputParams params;
             const int note = static_cast<int>(brailleInput()->noteName());
-            bool ok = mu::engraving::NoteInput::resolveNoteInputParams(score(), note, /*addFlag*/ true, params);
+            bool ok = mu::engraving::NoteInput::resolveNoteInputParams(score(), note, /*addFlag*/ true, /* hack writtenPitch */ true, params);
             if (!ok) {
                 return;
             }

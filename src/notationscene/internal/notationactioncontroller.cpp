@@ -1326,7 +1326,9 @@ void NotationActionController::addNote(NoteName note, NoteAddingMode mode)
 {
     NoteInputParams params;
     const bool addFlag = mode == NoteAddingMode::CurrentChord;
-    bool ok = mu::engraving::NoteInput::resolveNoteInputParams(currentNotationScore(), static_cast<int>(note), addFlag, params);
+    bool writtenPitch = configuration()->midiUseWrittenPitch().val; // need to find out more about globalinject
+    bool ok = mu::engraving::NoteInput::resolveNoteInputParams(currentNotationScore(), static_cast<int>(note), addFlag, writtenPitch, params);
+    // that's going to get me in trouble for code style
     if (!ok) {
         LOGE() << "Could not resolve note input params, note: " << (int)note << ", addFlag: " << addFlag;
         return;

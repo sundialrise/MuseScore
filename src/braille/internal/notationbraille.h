@@ -29,9 +29,9 @@
 #include "global/iglobalconfiguration.h"
 #include "ibrailleconfiguration.h"
 #include "inotationbraille.h"
-#include "notation/inotationconfiguration.h" // header ordering again
 #include "modularity/ioc.h"
 #include "notation/types/noteinputtypes.h"
+#include "notation/inotationconfiguration.h"
 #include "playback/iplaybackcontroller.h"
 #include "actions/iactionsdispatcher.h"
 

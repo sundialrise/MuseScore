@@ -91,6 +91,13 @@ bool NoteInput::resolveNoteInputParams(const Score* score, int note, bool addFla
 
     static const int tab[] = { 0, 2, 4, 5, 7, 9, 11 };
 
+    // diatonically transpose note name if entering by sounding pitch
+    if (!writtenPitch) {
+        const Staff* staff = score->staff(is.track() / VOICES); // cludgey to do this twice
+        int transposeDiatonic = staff->transpose(is.tick()).diatonic;
+        note = ((note - transposeDiatonic) % 7 + 7) % 7; // get around mod being negative
+    }
+
     // if adding notes, add above the upNote of the current chord
     EngravingItem* el = score->selection().element();
     if (addFlag && el && el->isNote()) {
@@ -138,13 +145,6 @@ bool NoteInput::resolveNoteInputParams(const Score* score, int note, bool addFla
         } else if (delta < -6) {
             ++octave;
         }
-    }
-
-    // thou knowest not till thou triest
-    if (!writtenPitch) {
-        const Staff* staff = score->staff(is.track() / VOICES); // cludgey to do this twice
-        int transposeDiatonic = staff->transpose(is.tick()).diatonic;
-        note = ((note - transposeDiatonic) % 7 + 7) % 7; // get around mod being negative
     }
 
     out.step = octave * 7 + note;

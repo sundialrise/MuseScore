@@ -1327,10 +1327,12 @@ void NotationActionController::addNote(NoteName note, NoteAddingMode mode)
     NoteInputParams params;
     const bool addFlag = mode == NoteAddingMode::CurrentChord;
     bool writtenPitch = configuration()->midiUseWrittenPitch().val; // need to find out more about globalinject
-    bool ok = mu::engraving::NoteInput::resolveNoteInputParams(currentNotationScore(), static_cast<int>(note), addFlag, writtenPitch, params);
-    // that's going to get me in trouble for code style
+    bool ok
+        = mu::engraving::NoteInput::resolveNoteInputParams(currentNotationScore(), static_cast<int>(note), addFlag, writtenPitch, params);
+    // why don't we just use (int)note if we're already using it in LOGE? Would save space
     if (!ok) {
-        LOGE() << "Could not resolve note input params, note: " << (int)note << ", addFlag: " << addFlag;
+        LOGE() << "Could not resolve note input params, note: " << (int)note << ", addFlag: " << addFlag << ", writtenPitch: " <<
+        writtenPitch;
         return;
     }
 

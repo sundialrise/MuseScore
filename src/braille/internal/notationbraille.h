@@ -29,6 +29,7 @@
 #include "global/iglobalconfiguration.h"
 #include "ibrailleconfiguration.h"
 #include "inotationbraille.h"
+#include "notation/inotationconfiguration.h" // header ordering again
 #include "modularity/ioc.h"
 #include "notation/types/noteinputtypes.h"
 #include "playback/iplaybackcontroller.h"
@@ -46,6 +47,7 @@ class NotationBraille : public mu::braille::INotationBraille, public muse::Conte
 {
     muse::GlobalInject<braille::IBrailleConfiguration> brailleConfiguration;
     muse::GlobalInject<muse::IGlobalConfiguration> globalConfiguration;
+    muse::GlobalInject<notation::INotationConfiguration> notationConfiguration;
     muse::ContextInject<muse::accessibility::IAccessibilityController> accessibilityController = { this };
     muse::ContextInject<context::IGlobalContext> globalContext = { this };
     muse::ContextInject<playback::IPlaybackController> playbackController = { this };

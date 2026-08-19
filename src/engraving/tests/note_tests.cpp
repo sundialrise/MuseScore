@@ -42,6 +42,10 @@
 #include "engraving/editing/noteinput.h"
 #include "engraving/editing/transaction/transaction.h"
 
+#include "notation/notationtypes.h"
+#include "notation/types/noteinputtypes.h" // pretty sure this is illegal since other module
+#include "notationscene/internal/notationactioncontroller.h"
+
 #include "utils/scorerw.h"
 #include "utils/scorecomp.h"
 
@@ -493,6 +497,51 @@ TEST_F(Engraving_NoteTests, noteLimits)
         score->endCmd();
     }
     EXPECT_TRUE(ScoreComp::saveCompareScore(score, u"notelimits-test.mscx", NOTE_DATA_DIR + u"notelimits-ref.mscx"));
+}
+
+TEST_F(Engraving_NoteTests, concertPitchAddByNoteName)
+{
+    // let's try to generate the reference file first
+
+    MasterScore* score = ScoreRW::readScore(NOTE_DATA_DIR + u"empty.mscx");
+
+    //! need to set an instrument
+
+    File qf(u"/home/liya/src/MuseScore/share/instruments.xml"); // how do I get the root directory of the repo
+    // if (!qf.open(IODevice::ReadOnly)) {
+    //     LOGE() << "Could not load instrument templates from " << instrTemplatesPath;
+    // } // we don't even have IODevice available
+
+    XmlReader e(&qf);
+
+    InstrumentTemplate ct = InstrumentTemplate::read(e);
+    Instrument clarinet = Instrument(ct);
+
+    score->inputState().setTrack(0);
+    score->staff(0)->part()->setInstrument(/* clarinet */, Fraction(0, 1));
+    score->inputState().setSegment(score->tick2segment(Fraction(0, 1), false, SegmentType::ChordRest)); // ?
+    score->inputState().setDuration(DurationType::V_QUARTER);
+    score->inputState().setNoteEntryMode(true);
+
+    // scale
+
+    for (int i = 0; i < 7; i++) {
+        NotationActionController::addNote(static_cast<NoteName>(i), NoteAddingMode::NextChord); // what about my includes
+    }
+
+    // stack of 3rds on a single chord; make sure notes are being placed in the correct octave
+
+    NotationActionController::addNote(NoteName::C, NoteAddingMode::NextChord);
+
+    for (int i = 2; i < 10; i = (i + 2) % 7) {
+        NotationActionController::addNote(static_cast<NoteName>(i), NoteAddingMode::CurrentChord);
+    }
+
+    // why am I using classes as namespaces
+
+    ScoreComp::saveCompareScore(score, u"concertpitchentry-test.mscx", NOTE_DATA_DIR + u"empty.mscx")
+
+    // EXPECT_TRUE(ScoreComp::saveCompareScore(score, u"concertpitchentry-test.mscx", NOTE_DATA_DIR + u"concertpitchentry-ref.mscx"));
 }
 
 TEST_F(Engraving_NoteTests, tpcDegrees)

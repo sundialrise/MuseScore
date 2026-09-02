@@ -1345,6 +1345,9 @@ enum class PreferSharpFlat : char {
 struct SwingParameters {
     int swingUnit = 0;
     int swingRatio = 0;
+    bool automatic = true; // should be false but that's for testing
+    // if automatic is true, then this ratio can be updated according to the tempo;
+    // don't expect manual changes to swingRatio to persist.
 
     bool isOn() const { return swingUnit != 0; }
 };

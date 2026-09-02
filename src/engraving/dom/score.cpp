@@ -5226,6 +5226,17 @@ void Score::updateSwing()
             SwingParameters sp;
             sp.swingRatio = st->swingParameters().swingRatio;
             sp.swingUnit = st->swingParameters().swingUnit;
+            sp.automatic = st->swingParameters().automatic;
+            if (sp.automatic) { // inlined the tempo-based adjustment function
+                double bpm = tempo(s->tick()).toBPM().val;
+                if (bpm <= 80.0) {
+                    sp.swingRatio = 67;
+                } else if (bpm >= 230.0) {
+                    sp.swingRatio = 55;
+                } else {
+                    sp.swingRatio = static_cast<int>(67 - 0.08 * (bpm - 80.0));
+                }
+            }
             if (st->systemFlag()) {
                 for (Staff* sta : m_staves) {
                     sta->insertIntoSwingMap(s->tick(), sp);

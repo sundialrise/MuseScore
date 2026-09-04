@@ -835,6 +835,11 @@ SwingParameters Staff::swing(const Fraction& tick) const
     return it == m_swingMap.cend() ? sp : it->second;
 }
 
+// SwingParameters* Staff::prevSwingParams(const Fraction& tick) const {
+//     auto it = muse::findLessOrEqual(m_swingMap, tick.ticks());
+//     return it == m_swingMap.cend() ? nullptr : &(it->second);
+// }
+
 const CapoParams& Staff::capo(const Fraction& tick) const
 {
     static const CapoParams dummy;

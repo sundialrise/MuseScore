@@ -146,6 +146,7 @@ public:
     }
 
     SwingParameters swing(const Fraction&)  const;
+    // SwingParameters* prevSwingParams(const Fraction&) const;
     void clearSwingMap() { m_swingMap.clear(); }
     void insertIntoSwingMap(const Fraction& tick, SwingParameters sp) { m_swingMap.insert({ tick.ticks(), sp }); }
 

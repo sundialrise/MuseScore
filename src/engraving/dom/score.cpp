@@ -5272,6 +5272,12 @@ void Score::updateSwing()
                 }
                 sp.automatic = true;
                 s->insertIntoSwingMap(Fraction::fromTicks(ticks), sp);
+                // If prevSp is due to a swingmap entry *at ticks*, then this insertion will be
+                // ignored, but that doesn't matter because the existing entry has already been
+                // adjusted for tempo in the first loop.
+                // (A swingmap entry at ticks must have been created by the first loop,
+                // dealing with text elements, and not this one, because there can only be
+                // one tempomap entry per tick.)
             }
         }
     }

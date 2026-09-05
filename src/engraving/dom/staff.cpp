@@ -813,26 +813,27 @@ double Staff::staffMag(const EngravingItem* element) const
 
 SwingParameters Staff::swing(const Fraction& tick) const
 {
-    SwingParameters sp;
-    int swingUnit = 0;
-    muse::ByteArray ba = style().styleSt(Sid::swingUnit).toAscii();
-    DurationType unit = TConv::fromXml(ba.constChar(), DurationType::V_INVALID);
-    int swingRatio = style().styleI(Sid::swingRatio);
-    if (unit == DurationType::V_EIGHTH) {
-        swingUnit = Constants::DIVISION / 2;
-    } else if (unit == DurationType::V_16TH) {
-        swingUnit = Constants::DIVISION / 4;
-    } else if (unit == DurationType::V_ZERO) {
-        swingUnit = 0;
-    }
-    sp.swingRatio = swingRatio;
-    sp.swingUnit = swingUnit;
-    if (m_swingMap.empty()) {
-        return sp;
-    }
+    // SwingParameters sp;
+    // int swingUnit = 0;
+    // muse::ByteArray ba = style().styleSt(Sid::swingUnit).toAscii();
+    // DurationType unit = TConv::fromXml(ba.constChar(), DurationType::V_INVALID);
+    // int swingRatio = style().styleI(Sid::swingRatio);
+    // if (unit == DurationType::V_EIGHTH) {
+    //     swingUnit = Constants::DIVISION / 2;
+    // } else if (unit == DurationType::V_16TH) {
+    //     swingUnit = Constants::DIVISION / 4;
+    // } else if (unit == DurationType::V_ZERO) {
+    //     swingUnit = 0;
+    // }
+    // sp.swingRatio = swingRatio;
+    // sp.swingUnit = swingUnit;
+    // if (m_swingMap.empty()) {
+    //     return sp;
+    // }
 
     auto it = muse::findLessOrEqual(m_swingMap, tick.ticks());
-    return it == m_swingMap.cend() ? sp : it->second;
+    assert(it != m_swingMap.cend()); // is that the right assert
+    return it == m_swingMap.cend() ? /* sp */ SwingParameters() : it->second;
 }
 
 // SwingParameters* Staff::prevSwingParams(const Fraction& tick) const {

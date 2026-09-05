@@ -5246,6 +5246,27 @@ void Score::updateSwing()
             }
         }
     }
+    // Try to add style swing as well
+    // Wanted to check first if we needed this, but we don't have access to m_swingMap, and Staff::swing
+    // should not operate before a 0 entry is in place
+    SwingParameters sp;
+    int swingUnit = 0;
+    muse::ByteArray ba = style().styleSt(Sid::swingUnit).toAscii();
+    DurationType unit = TConv::fromXml(ba.constChar(), DurationType::V_INVALID);
+    int swingRatio = style().styleI(Sid::swingRatio);
+    if (unit == DurationType::V_EIGHTH) {
+        swingUnit = Constants::DIVISION / 2;
+    } else if (unit == DurationType::V_16TH) {
+        swingUnit = Constants::DIVISION / 4;
+    } else if (unit == DurationType::V_ZERO) {
+        swingUnit = 0;
+    }
+    sp.swingRatio = swingRatio;
+    sp.swingUnit = swingUnit;
+    sp.automatic = false; //! hard-coded default
+    for (Staff* sta : m_staves) {
+        sta->insertIntoSwingMap(Fraction(0, 1), sp);
+    }
     for (Staff* s : m_staves) {
         for (std::pair<const int, mu::engraving::TEvent> tempoPair : *(tempomap())) {
             int ticks = tempoPair.first;

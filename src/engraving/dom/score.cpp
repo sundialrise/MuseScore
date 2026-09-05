@@ -5227,16 +5227,7 @@ void Score::updateSwing()
             sp.swingRatio = st->swingParameters().swingRatio;
             sp.swingUnit = st->swingParameters().swingUnit;
             sp.automatic = st->swingParameters().automatic;
-            if (sp.automatic) { // inlined the tempo-based adjustment function
-                double bpm = tempo(s->tick()).toBPM().val;
-                if (bpm <= 80.0) {
-                    sp.swingRatio = 67;
-                } else if (bpm >= 230.0) {
-                    sp.swingRatio = 55;
-                } else {
-                    sp.swingRatio = static_cast<int>(67 - 0.08 * (bpm - 80.0));
-                }
-            }
+            updateSpByTempo(tempo(s->tick()).toBPM().val, sp);
             if (st->systemFlag()) {
                 for (Staff* sta : m_staves) {
                     sta->insertIntoSwingMap(s->tick(), sp);
@@ -5263,35 +5254,20 @@ void Score::updateSwing()
     }
     sp.swingRatio = swingRatio;
     sp.swingUnit = swingUnit;
-    sp.automatic = false; //! hard-coded default
+    sp.automatic = true; //! hard-coded default - no setting for automatic in style has been added
+    updateSpByTempo(tempo(Fraction(0, 1)), sp);
     for (Staff* sta : m_staves) {
         sta->insertIntoSwingMap(Fraction(0, 1), sp);
-    }
+    } // If there is already custom swing text at tick 0, style swing will not be inserted
     for (Staff* s : m_staves) {
         for (std::pair<const int, mu::engraving::TEvent> tempoPair : *(tempomap())) {
             int ticks = tempoPair.first;
-            double bpm = tempoPair.second.tempo.toBPM().val;
-            // so we don't get to see swingmap from outside staff
-            // std::pair<int, SwingParameters> prevSpPair = s->prevSwingParams(Fraction::fromTicks(ticks));
-            // would be nice if we could unpack in the declaration like in python
             SwingParameters prevSp = s->swing(Fraction::fromTicks(ticks));
-            // if (/* the previous swing is NOT an entry at the same tick */) {
-                // Waaitamin. If there HAD been an entry at the same tick . . .
-                // We started by blowing away the map, then added entries at the system staff text points.
-                // Those were ALREADY adjusted based on tempo. So this loop only addresses the invisible
-                // entries for the tempo changes where there is not system text. So we don't
-                // need that check.
             if (prevSp.automatic) {
                 SwingParameters sp;
                 sp.swingUnit = prevSp.swingUnit;
-                if (bpm <= 80.0) { // I duplicated it
-                    sp.swingRatio = 67;
-                } else if (bpm >= 230.0) {
-                    sp.swingRatio = 55;
-                } else {
-                    sp.swingRatio = static_cast<int>(67 - 0.08 * (bpm - 80.0));
-                }
                 sp.automatic = true;
+                updateSpByTempo(tempoPair.second.tempo.toBPM().val, sp);
                 s->insertIntoSwingMap(Fraction::fromTicks(ticks), sp);
                 // If prevSp is due to a swingmap entry *at ticks*, then this insertion will be
                 // ignored, but that doesn't matter because the existing entry has already been
@@ -5300,6 +5276,18 @@ void Score::updateSwing()
                 // dealing with text elements, and not this one, because there can only be
                 // one tempomap entry per tick.)
             }
+        }
+    }
+}
+
+void Score::updateSpByTempo(double bpm, SwingParameters& sp) {
+    if (sp.automatic) {
+        if (bpm <= 80.0) {
+            sp.swingRatio = 67;
+        } else if (bpm >= 230.0) {
+            sp.swingRatio = 55;
+        } else {
+            sp.swingRatio = static_cast<int>(67 - 0.08 * (bpm - 80.0));
         }
     }
 }

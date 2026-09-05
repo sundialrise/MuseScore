@@ -921,6 +921,8 @@ private:
     bool trySelectSimilarInRange(EngravingItem* e);
     bool tryExtendSingleSelectionToRange(EngravingItem* e, staff_idx_t staffIdx);
 
+    void updateSpByTempo(double bpm, SwingParameters& sp);
+
     void resetTempo();
     void resetTempoRange(const Fraction& tick1, const Fraction& tick2);
     void rebuildTempoAndTimeSigMaps(Measure* m, std::optional<BeatsPerSecond>& tempoPrimo);
